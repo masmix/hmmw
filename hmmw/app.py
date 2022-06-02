@@ -23,41 +23,52 @@ import json
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
-def lambda_handler(event, context):
+def invoke_cloudformation():
+    
+    template_file_location = 'lambda/mystack.json'
+    
+    directory = os.getcwd()
+
+    dir_list = os.listdir(directory)
+
+    logger.debug("Current path: %s", dir_list)
+    
+    with open(template_file_location, 'r') as content_file:
+        content = content_file.read()
+    
+    params = [
+        {
+            "ParameterKey" : "KeyName",
+            "ParameterValue" : "keypair1"
+        }
+        ]
+    
+    client = boto3.client('cloudformation')
+    response = client.create_stack(StackName='ec2-wkacz', TemplateBody=content, Parameters=params)
+    for item in dir(client):
+        print(item)
+    return 'hello'
+
+def handler(event, context):
     """
     Lambda handler function to be triggered by saveProduct API.
     """
     try:
         requestJson = json.loads(event["body"])
+        stackId = requestJson['id']
         InstanceType = requestJson['InstanceType']
         KeyName = requestJson['KeyName']
         Description = requestJson['Description']
-        SubnetID = requestJson['SubnetID']
 
-        logger.debug("Resource Id: %s", InstanceType)
-        logger.debug("Ssh keypair name: %s", KeyName)
-        logger.debug("Cloud Formation stack description: %s", Description)
-        logger.debug("EC2 SubnetID: %s", SubnetID)
-        logger.debug("DynamoDB Table: %s", os.environ['DYNAMODB_TABLE'])
+        logger.debug("Stack Id: %s", stackId)
+        logger.debug("Product InstanceType: %s", InstanceType)
+        logger.debug("Product KeyName: %s", KeyName)
+        logger.debug("Description: %s", Description)
 
-        logger.info("Saving ...")
-        client = boto3.client('dynamodb')
-        response = client.put_item(
-                            TableName=os.environ['DYNAMODB_TABLE'],
-                            Item={
-                                    'instanceType': {
-                                        'S': InstanceType
-                                    },
-                                    'keyName': {
-                                        'S': KeyName
-                                    },
-                                    'description': {
-                                        'S': Description
-                                    },
-                                    'SubnetId': {
-                                        'S': SubnetID
-                                    }
-                                })
+        logger.info("Saving product...")
+        response = invoke_cloudformation()
+        response = 'hello'
+        print(json.dumps(event))
         logger.info("Success: %s", response)
         returnResp = {
             "isBase64Encoded": True,
@@ -67,10 +78,10 @@ def lambda_handler(event, context):
         return returnResp
     except Exception as e:
         logger.error("Unknow exception occured when saving product. %s", e)
-        traceback.print_exc()
+        #traceback.print_exc()
         returnResp = {
             "isBase64Encoded": True,
             "statusCode": 500,
-            "body": "Error occured when creating product"
+            "body": e
         }
         return returnResp
