@@ -19,13 +19,21 @@ import logging
 import traceback
 import sys
 import json
+import jinja2
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
+def render_template():
+    template_file_location = 'mystack.json.j2'
+    with open(template_file_location, 'r') as content_file:
+        content = content_file.read()
+
+    return template 
+
 def invoke_cloudformation():
     
-    template_file_location = 'lambda/mystack.json'
+    template_file_location = 'mystack.json'
     
     directory = os.getcwd()
 
