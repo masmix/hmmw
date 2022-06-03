@@ -3,10 +3,10 @@ version = 0.1
 [default.deploy]
 [default.deploy.parameters]
 stack_name = "hmmw"
-s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-5a1evxnex9ig"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-3yqwd2pualah"
 s3_prefix = "hmmw"
 region = "eu-central-1"
-profile = "hmmw"
+profile = "developer1_pulumi"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
 image_repositories = []
