@@ -29,10 +29,14 @@ def render_template():
     with open(template_file_location, 'r') as content_file:
         content = content_file.read()
 
-    return template 
+    return content 
 
 def invoke_cloudformation():
     
+    jinja2Template = render_template()
+
+    logger.debug("Jinja Template: %s", jinja2Template) 
+
     template_file_location = 'mystack.json'
     
     directory = os.getcwd()
@@ -55,7 +59,7 @@ def invoke_cloudformation():
     response = client.create_stack(StackName='ec2-wkacz', TemplateBody=content, Parameters=params)
     for item in dir(client):
         print(item)
-    return 'hello'
+    return 'Stack has been created'
 
 def handler(event, context):
     """
