@@ -2,7 +2,7 @@ REGION = eu-central-1
 AWS_PROFILE = 'developer1_pulumi'
 build:
 	sam build 
-test: 
+tests: 
 	python -m pytest tests/ -v 
 deploy:
 	sam deploy
