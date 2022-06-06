@@ -79,7 +79,6 @@ def handler(event, context):
 
         logger.info("Saving product...")
         response = invoke_cloudformation()
-        response = 'hello'
         print(json.dumps(event))
         logger.info("Success: %s", response)
         returnResp = {

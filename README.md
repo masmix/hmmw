@@ -28,11 +28,12 @@ pip install virtualenv
 virtualenv venv
 source venv/bin/activate
 ```
-
+# Build
 ```bash
-sam build --use-container
-sam deploy --guided
+make build 
 ```
+
+# Deploy
 
 The first command will build the source of your application. The second command will package and deploy your application to AWS, with a series of prompts:
 

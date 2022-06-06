@@ -1,0 +1,6 @@
+{
+  "id": "1002",
+  "InstanceType": "t1.micro",
+  "KeyName": "keypair1",
+  "Description": "This is stack for ec2 instance 2"
+}
