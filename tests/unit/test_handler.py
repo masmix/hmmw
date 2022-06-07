@@ -2,6 +2,7 @@ import json
 
 import pytest
 
+from unittest.mock import patch, mock_open
 from hmmw.hmmw import app
 
 
@@ -10,7 +11,7 @@ def apigw_event():
     """ Generates API GW Event"""
 
     return {
-        "body": '{ "test": "body"}',
+        "body": '{ "id": "1002", "InstanceType": "t1.micro", "KeyName": "keypair1", "Description": "This is stack for ec2 instance 2"}',
         "resource": "/{proxy+}",
         "requestContext": {
             "resourceId": "123456",
@@ -64,10 +65,13 @@ def apigw_event():
 
 def test_lambda_handler(apigw_event, mocker):
 
-    ret = app.lambda_handler(apigw_event, "")
+    with patch("builtins.open", mock_open(read_data="data")) as mock_file:
+        assert open("mystack.json.j2").read() == "data"
+    mock_file.assert_called_with("mystack.json.j2")
+
+    ret = app.handler(apigw_event, "")
     data = json.loads(ret["body"])
 
     assert ret["statusCode"] == 200
-    assert "message" in ret["body"]
-    assert data["message"] == "hello world"
-    # assert "location" in data.dict_keys()
+    assert "Stack has been created" in ret["body"]
+    
