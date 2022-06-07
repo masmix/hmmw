@@ -39,14 +39,14 @@ Resources:
   DemoSubnet:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: "vpc-0758469e3cb08040d"
-      CidrBlock: 172.31.48.0/20
+      VpcId: "vpc-038732f2993bd5ba7"
+      CidrBlock: 10.0.16.0/20
       AvailabilityZone: "eu-central-1a"
 
   DemoNetworkAcl:
     Type: AWS::EC2::NetworkAcl
     Properties: 
-      VpcId: "vpc-0758469e3cb08040d"
+      VpcId: "vpc-038732f2993bd5ba7"
       
   SSHInboundRule:
     Type: AWS::EC2::NetworkAclEntry
