@@ -25,6 +25,12 @@ logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 def render_template():
+    directory = os.getcwd()
+
+    dir_list = os.listdir(directory)
+
+    logger.debug("Current path: %s", dir_list)
+    
     template_file_location = 'mystack.json.j2'
     with open(template_file_location, 'r') as content_file:
         content = content_file.read()
