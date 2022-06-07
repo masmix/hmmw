@@ -1,6 +1,8 @@
 # hmmw
 
-This project contains source code and supporting files for a serverless application that you can deploy with the AWS Serverless Aplication Model CLI.
+This project contains source code and supporting files for a serverless application.
+
+> Based on codebase from the project https://github.com/MichalLeszczynski/task-two
 
 # Functionalities
 
@@ -27,10 +29,11 @@ cd hmmw
 pip install virtualenv
 virtualenv venv
 source venv/bin/activate
+pip install -r stack_creator/requirements.txt
 ```
-# Build
+# Package
 ```bash
-make build 
+make package 
 ```
 
 # Deploy
@@ -39,16 +42,10 @@ make build
 make deploy
 ```
 
-# Unit and integraton tests
-```bash
-make test
-```
-## Cleanup
-
-To delete the sample application that you created, use the AWS CLI. Assuming you used your project name for the stack name, you can run the following:
+## Destroy 
 
 ```bash
-aws cloudformation delete-stack --stack-name hmmw
+make deploy
 ```
 
 ## Resources

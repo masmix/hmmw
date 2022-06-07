@@ -10,7 +10,8 @@
                 "s3:*",
                 "kms:*",
                 "lambda:*",
-                "apigateway:*"
+                "apigateway:*", 
+                "dynamodb:*"
             ],
             "Resource": "*"
         }
