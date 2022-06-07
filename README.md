@@ -41,7 +41,7 @@ make deploy
 
 # Unit and integraton tests
 ```bash
-make tests 
+make test
 ```
 ## Cleanup
 
