@@ -3,11 +3,12 @@
 This project contains source code and supporting files for a serverless application.
 
 > Based on codebase from the project https://github.com/MichalLeszczynski/task-two
+> Very big thanks for https://github.com/MichalLeszczynski for the amazing implementation !!! 
 
 # Functionalities
 
 - create ec2 instance from jinja predefined cloudformation template
-- API which accept requests with ec2 machine parameters
+- API fo which accept requests with payload with ec2 machine parameters
 - upload changes to DynamoDb
 
 ## Prereqisities - tools
