@@ -11,7 +11,7 @@ def apigw_event():
     """ Generates API GW Event"""
 
     return {
-        "body": '{ "id": "1002", "InstanceType": "t1.micro", "KeyName": "keypair1", "Description": "This is stack for ec2 instance 2"}',
+        "body" : '{"action":"Create","stack_name":"wkacz-ec2-stack","launch_params":{"template_filename":"internal-stack.yaml.j2","template_params":{"bucket_name":"wkacz-ec2-bucket","ssh_key_name":"wkacz-ssh-key"}}}',
         "resource": "/{proxy+}",
         "requestContext": {
             "resourceId": "123456",
@@ -66,6 +66,7 @@ def apigw_event():
 def test_lambda_handler(apigw_event, mocker):
 
     ret = main.request_handler(apigw_event, "")
+    print(type(ret))
     data = json.loads(ret["body"])
 
     assert ret["statusCode"] == 200
