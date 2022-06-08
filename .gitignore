@@ -5,6 +5,7 @@
 *~
 
 #Build generated files
+.aws-sam
 url.txt
 packaged-stack.yaml
 stack_creator_function/jinja2*
