@@ -14,6 +14,7 @@ This project contains source code and supporting files for a serverless applicat
 # Functionalities
 
 - create ec2 instance from jinja predefined cloudformation template
+- access to AWS account S3 bucets from above ec2 instance
 - API fo which accept requests with payload with ec2 machine parameters
 - upload changes to DynamoDb
 
@@ -52,6 +53,10 @@ make deploy_payload
 ```
 
 # Ssh login into ec2 instance
+
+```bash
+make login
+```
 
 # Destroy ec2 instance
 
