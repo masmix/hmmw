@@ -3,7 +3,7 @@ import json
 import pytest
 
 from unittest.mock import patch, mock_open
-from hmmw.hmmw import app
+from request_handler_function import main
 
 
 @pytest.fixture()
@@ -65,11 +65,7 @@ def apigw_event():
 
 def test_lambda_handler(apigw_event, mocker):
 
-    with patch("builtins.open", mock_open(read_data="data")) as mock_file:
-        assert open("mystack.json.j2").read() == "data"
-    mock_file.assert_called_with("mystack.json.j2")
-
-    ret = app.handler(apigw_event, "")
+    ret = main.request_handler(apigw_event, "")
     data = json.loads(ret["body"])
 
     assert ret["statusCode"] == 200
