@@ -48,3 +48,6 @@ payload_public_dns_output:
 
 login: get-keys payload_public_dns_output
 	ssh -i ./key.pem ec2-user@$(shell cat public_dns.txt)
+
+test:
+	python -m pytest tests/ -v
