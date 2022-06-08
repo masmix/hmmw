@@ -18,11 +18,12 @@ This project contains source code and supporting files for a serverless applicat
 - API fo which accept requests with payload with ec2 machine parameters
 - upload changes to DynamoDb
 
-## Prereqisities - tools
+## Prereqisities
 
-1. Install the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) 
+1. [Install the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) 
+2. [Configure the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)
 2. [Create specific user with restricted permissons (optional)](Permissions-accounts-set-up/README.md) 
-3. [Python 3 with venv installed](https://www.python.org/downloads/)
+3. [Python 3 with vitualenvironment (recomended below)](https://www.python.org/downloads/)  
 
 ### Virtual local environment setup
 
