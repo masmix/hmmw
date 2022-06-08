@@ -5,6 +5,12 @@ This project contains source code and supporting files for a serverless applicat
 > Based on codebase from the project https://github.com/MichalLeszczynski/task-two
 > Very big thanks for https://github.com/MichalLeszczynski for the amazing implementation !!! 
 
+# Technologies
+- AWS Lambda
+- AWS CloudFormation
+- AWS DynamoDb
+- Python 3.x
+
 # Functionalities
 
 - create ec2 instance from jinja predefined cloudformation template
