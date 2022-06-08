@@ -23,7 +23,8 @@ This project contains source code and supporting files for a serverless applicat
 1. [Install the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) 
 2. [Configure the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)
 2. [Create specific user with restricted permissons (optional)](Permissions-accounts-set-up/README.md) 
-3. [Python 3 with vitualenvironment (recomended below)](https://www.python.org/downloads/)  
+3. [Python 3 with vitualenvironment (recomended below)](https://www.python.org/downloads/) 
+4. Make command line installed 
 
 ### Virtual local environment setup
 
