@@ -4,6 +4,18 @@
 ### Linux ###
 *~
 
+#Build generated files
+.aws-sam
+url.txt
+packaged-stack.yaml
+stack_creator_function/jinja2*
+stack_creator_function/Jinja2*
+stack_creator_function/mark*
+stack_creator_function/Mark*
+key_pair_id.txt
+key.pem
+public_dns.txt
+
 # temporary files which can be created if a process still has a handle open of a deleted file
 .fuse_hidden*
 
