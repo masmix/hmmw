@@ -8,7 +8,7 @@ This project contains source code and supporting files for a serverless applicat
 # Technologies
 - AWS Lambda
 - AWS CloudFormation
-- AWS DynamoDb
+- AWS DynamoDB
 - Python 3.x
 
 # Functionalities
