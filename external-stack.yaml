@@ -1,58 +1,124 @@
-AWSTemplateFormatVersion: '2010-09-09'
-Description: 'Deploy hmmw solution'
-
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Deploy hmmw solution
+Outputs:
+  FunctionUrl:
+    Description: Url to invoke deployed Function
+    Value: RequestFunctionUrl.FunctionUrl
 Parameters:
   ActionsDynamoDbTableName:
-    Type: String
     Default: wkacz-cfn-actions
-
-  StatesDynamoDbTableName:
     Type: String
+  StatesDynamoDbTableName:
     Default: wkacz-cfn-states
-
-
+    Type: String
 Resources:
+  ActionsDynamoDBTable:
+    Properties:
+      AttributeDefinitions:
+      - AttributeName: Stackname
+        AttributeType: S
+      - AttributeName: Timestamp
+        AttributeType: S
+      KeySchema:
+      - AttributeName: Stackname
+        KeyType: HASH
+      - AttributeName: Timestamp
+        KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      TableName: ActionsDynamoDbTableName
+    Type: AWS::DynamoDB::Table
+  RequestFunction:
+    Properties:
+      Code: ./request_handler_function
+      Description: Example
+      Environment:
+        Variables:
+          ActionsDynamoDbTableName: ActionsDynamoDbTableName
+      Handler: main.request_handler
+      Role: RequestFunctionRole.Arn
+      Runtime: python3.9
+      Timeout: 300
+    Type: AWS::Lambda::Function
   RequestFunctionRole:
-    Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
         Statement:
-          - Effect: Allow
-            Principal:
-              Service: lambda.amazonaws.com
-            Action: sts:AssumeRole
+        - Action: sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+        Version: "2012-10-17"
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Policies:
-      - PolicyName: DynamodbFunctionPolicy
-        PolicyDocument:
-          Version: 2012-10-17
+      - PolicyDocument:
           Statement:
-          - Effect: Allow
-            Action:
+          - Action:
             - dynamodb:PutItem
+            Effect: Allow
             Resource: '*'
-
-  StreamFunctionRole:
+          Version: "2012-10-17"
+        PolicyName: DynamodbFunctionPolicy
     Type: AWS::IAM::Role
+  RequestFunctionUrl:
+    Properties:
+      AuthType: AWS_IAM
+      TargetFunctionArn: RequestFunction
+    Type: AWS::Lambda::Url
+  RequestUrlFunctionPermissions:
+    Properties:
+      Action: lambda:InvokeFunctionUrl
+      FunctionName: RequestFunction
+      FunctionUrlAuthType: AWS_IAM
+      Principal: '*'
+    Type: AWS::Lambda::Permission
+  StatesDynamoDBTable:
+    Properties:
+      AttributeDefinitions:
+      - AttributeName: Stackname
+        AttributeType: S
+      KeySchema:
+      - AttributeName: Stackname
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      TableName: StatesDynamoDbTableName
+    Type: AWS::DynamoDB::Table
+  StreamFunction:
+    Properties:
+      Code: ./stack_creator_function
+      Description: Example
+      Environment:
+        Variables:
+          ActionsDynamoDbTableName: ActionsDynamoDbTableName
+          StatesDynamoDbTableName: StatesDynamoDbTableName
+      Handler: main.stream_handler
+      Role: StreamFunctionRole.Arn
+      Runtime: python3.9
+      Timeout: 300
+    Type: AWS::Lambda::Function
+  StreamFunctionRole:
     Properties:
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
         Statement:
-          - Effect: Allow
-            Principal:
-              Service: lambda.amazonaws.com
-            Action: sts:AssumeRole
+        - Action: sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+        Version: "2012-10-17"
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Policies:
-      - PolicyName: IAMFunctionPolicy
-        PolicyDocument:
-          Version: 2012-10-17
+      - PolicyDocument:
           Statement:
-          - Effect: Allow
-            Action:
+          - Action:
             - iam:CreateInstanceProfile
             - iam:DeleteInstanceProfile
             - iam:GetRole
@@ -64,22 +130,22 @@ Resources:
             - iam:PassRole
             - iam:GetRolePolicy
             - iam:DeleteRolePolicy
-            Resource: "*"
-      - PolicyName: SSMFunctionPolicy
-        PolicyDocument:
-          Version: 2012-10-17
+            Effect: Allow
+            Resource: '*'
+          Version: "2012-10-17"
+        PolicyName: IAMFunctionPolicy
+      - PolicyDocument:
           Statement:
-          - Effect: Allow
-            Action:
+          - Action:
             - ssm:PutParameter
             - ssm:DeleteParameter
-            Resource: "*"
-      - PolicyName: EC2FunctionPolicy
-        PolicyDocument:
-          Version: 2012-10-17
+            Effect: Allow
+            Resource: '*'
+          Version: "2012-10-17"
+        PolicyName: SSMFunctionPolicy
+      - PolicyDocument:
           Statement:
-          - Effect: Allow
-            Action:
+          - Action:
             - ec2:AuthorizeSecurityGroupIngress
             - ec2:TerminateInstances
             - ec2:CreateTags
@@ -103,142 +169,57 @@ Resources:
             - ec2:ReplaceNetworkAclAssociation
             - ec2:CreateNetworkAclEntry
             - ec2:DeleteNetworkAclEntry
-            Resource: "*"
-      - PolicyName: CFNFunctionPolicy
-        PolicyDocument:
-          Version: 2012-10-17
+            Effect: Allow
+            Resource: '*'
+          Version: "2012-10-17"
+        PolicyName: EC2FunctionPolicy
+      - PolicyDocument:
           Statement:
-          - Effect: Allow
-            Action:
+          - Action:
             - cloudformation:CreateStack
             - cloudformation:DescribeStacks
             - cloudformation:ListStacks
             - cloudformation:DeleteStack
-            Resource: "*"
-      - PolicyName: S3FunctionPolicy
-        PolicyDocument:
-          Version: 2012-10-17
+            Effect: Allow
+            Resource: '*'
+          Version: "2012-10-17"
+        PolicyName: CFNFunctionPolicy
+      - PolicyDocument:
           Statement:
-          - Effect: Allow
-            Action:
+          - Action:
             - s3:CreateBucket
             - s3:DeleteBucket
             - s3:GetObject
             - s3:ListBucket
-            Resource: "*"
-      - PolicyName: StreamFunctionPolicy
-        PolicyDocument:
-          Version: 2012-10-17
+            Effect: Allow
+            Resource: '*'
+          Version: "2012-10-17"
+        PolicyName: S3FunctionPolicy
+      - PolicyDocument:
           Statement:
-          - Effect: Allow #allow to write logs to cloudwatch
-            Action:
+          - Action:
             - logs:CreateLogGroup
             - logs:CreateLogStream
             - logs:PutLogEvents
+            Effect: Allow
             Resource: arn:aws:logs:*:*:*
-          - Effect: Allow #allow lambda to read from the event stream
-            Action:
+          - Action:
             - dynamodb:DescribeStream
             - dynamodb:GetRecords
             - dynamodb:GetShardIterator
             - dynamodb:ListStreams
             - dynamodb:PutItem
             - dynamodb:GetItem
-            Resource: "*"
-
-  RequestFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      Description: Example
-      Handler: main.request_handler
-      Runtime: python3.9
-      Role: !GetAtt 'RequestFunctionRole.Arn'
-      Timeout: 300
-      Code: "./request_handler_function"
-      Environment:
-        Variables:
-          ActionsDynamoDbTableName: !Ref ActionsDynamoDbTableName
-
-  StreamFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      Description: Example
-      Handler: main.stream_handler
-      Runtime: python3.9
-      Role: !GetAtt 'StreamFunctionRole.Arn'
-      Timeout: 300
-      Code: "./stack_creator_function"
-      Environment:
-        Variables:
-          ActionsDynamoDbTableName: !Ref ActionsDynamoDbTableName
-          StatesDynamoDbTableName: !Ref StatesDynamoDbTableName
-
-  RequestUrlFunctionPermissions:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !Ref RequestFunction
-      Action: lambda:InvokeFunctionUrl
-      Principal: "*"
-      FunctionUrlAuthType: AWS_IAM
-
-  RequestFunctionUrl:
-    Type: AWS::Lambda::Url
-    Properties:
-      TargetFunctionArn: !Ref RequestFunction
-      AuthType: AWS_IAM
-
-  ActionsDynamoDBTable: 
-    Type: AWS::DynamoDB::Table
-    Properties: 
-      TableName: !Ref ActionsDynamoDbTableName
-      AttributeDefinitions: 
-        - AttributeName: "Stackname"
-          AttributeType: "S"
-
-        - AttributeName: "Timestamp"
-          AttributeType: "S"
-
-      KeySchema: 
-        - AttributeName: "Stackname"
-          KeyType: "HASH"
-
-        - AttributeName: "Timestamp"
-          KeyType: "RANGE"
-
-      ProvisionedThroughput: 
-        ReadCapacityUnits: "5"
-        WriteCapacityUnits: "5"
-      StreamSpecification:
-        StreamViewType: NEW_AND_OLD_IMAGES
-  
-  StatesDynamoDBTable: 
-    Type: AWS::DynamoDB::Table
-    Properties: 
-      TableName: !Ref StatesDynamoDbTableName
-      AttributeDefinitions: 
-        - AttributeName: "Stackname"
-          AttributeType: "S"
-
-      KeySchema: 
-        - AttributeName: "Stackname"
-          KeyType: "HASH"
-
-      ProvisionedThroughput: 
-        ReadCapacityUnits: "5"
-        WriteCapacityUnits: "5"
-      StreamSpecification:
-        StreamViewType: NEW_AND_OLD_IMAGES
-
+            Effect: Allow
+            Resource: '*'
+          Version: "2012-10-17"
+        PolicyName: StreamFunctionPolicy
+    Type: AWS::IAM::Role
   TableStreamFunctionMapping:
-    Type: AWS::Lambda::EventSourceMapping
     Properties:
       BatchSize: 1
-      Enabled: True
-      EventSourceArn: !GetAtt ActionsDynamoDBTable.StreamArn
-      FunctionName: !GetAtt StreamFunction.Arn
+      Enabled: true
+      EventSourceArn: ActionsDynamoDBTable.StreamArn
+      FunctionName: StreamFunction.Arn
       StartingPosition: LATEST
-
-Outputs:
-  FunctionUrl:
-    Description: Url to invoke deployed Function
-    Value: !GetAtt RequestFunctionUrl.FunctionUrl
+    Type: AWS::Lambda::EventSourceMapping
