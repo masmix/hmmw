@@ -15,7 +15,7 @@ def launch_stack(stack_name, launch_params):
     capabilities = ["CAPABILITY_NAMED_IAM"]
     stack_output = "Empty"
     try:
-        logger.debug("Creating stack: {stack_name}")
+        logger.debug("Creating stack: %s", stack_name)
         stack_output = cfn.create_stack(
             StackName=stack_name,
             DisableRollback=True,
@@ -35,7 +35,7 @@ def delete_stack(stack_name):
     stack_id = get_stack_id_by_name(stack_name)
     stack_output = "Empty"
     try:
-        print(f"Deleting stack: %s", stack_name)
+        logger.debug("Deleting stack: %s", stack_name)
         stack_output = cfn.delete_stack(StackName=stack_name)
     except Exception as e:
         print(str(e))
@@ -83,6 +83,7 @@ def process_stream(record_values):
 
     stack_name = record_values.get("Stackname").get("S")
     timestamp = record_values.get("Timestamp").get("S")
+    logger.debug("Stackname: %s", stack_name)
     print(f"Stackname: {stack_name}")
     print(f"Timestamp: {timestamp}")
 
