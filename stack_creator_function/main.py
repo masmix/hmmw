@@ -15,7 +15,7 @@ def launch_stack(stack_name, launch_params):
     capabilities = ["CAPABILITY_NAMED_IAM"]
     stack_output = "Empty"
     try:
-        logger.debug("Creating stack: {stack_name}")
+        logger.debug("Creating stack: %s", stack_name)
         stack_output = cfn.create_stack(
             StackName=stack_name,
             DisableRollback=True,
