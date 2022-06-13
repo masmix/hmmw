@@ -35,7 +35,7 @@ def delete_stack(stack_name):
     stack_id = get_stack_id_by_name(stack_name)
     stack_output = "Empty"
     try:
-        print(f"Deleting stack: %s", stack_name)
+        logger.debug("Deleting stack: %s", stack_name)
         stack_output = cfn.delete_stack(StackName=stack_name)
     except Exception as e:
         print(str(e))
