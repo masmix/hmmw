@@ -83,6 +83,7 @@ def process_stream(record_values):
 
     stack_name = record_values.get("Stackname").get("S")
     timestamp = record_values.get("Timestamp").get("S")
+    logger.debug("Stackname: %s", stack_name)
     print(f"Stackname: {stack_name}")
     print(f"Timestamp: {timestamp}")
 
