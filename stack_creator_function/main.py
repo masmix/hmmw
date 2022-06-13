@@ -3,6 +3,10 @@ import jinja2
 import os
 import datetime
 import time
+import logging
+
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
 
 cfn = boto3.client("cloudformation")
 dynamodb = boto3.resource("dynamodb")
@@ -11,7 +15,7 @@ def launch_stack(stack_name, launch_params):
     capabilities = ["CAPABILITY_NAMED_IAM"]
     stack_output = "Empty"
     try:
-        print(f"Creating stack: {stack_name}")
+        logger.debug("Creating stack: {stack_name}")
         stack_output = cfn.create_stack(
             StackName=stack_name,
             DisableRollback=True,
@@ -31,7 +35,7 @@ def delete_stack(stack_name):
     stack_id = get_stack_id_by_name(stack_name)
     stack_output = "Empty"
     try:
-        print(f"Deleting stack: {stack_name}")
+        print(f"Deleting stack: %s", stack_name)
         stack_output = cfn.delete_stack(StackName=stack_name)
     except Exception as e:
         print(str(e))
