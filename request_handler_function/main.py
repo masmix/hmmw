@@ -31,7 +31,9 @@ def request_handler(event, context):
         table = dynamodb.Table(os.environ["ActionsDynamoDbTableName"])
         request_result = table.put_item(Item=db_entry)
     except Exception as err:
+        logger.error("Unknown exception occured when finding product. %s", err)
         print(str(err))
     finally:
+        logger.debug("Request result: %s", request_result)
         print(request_result)
         return request_result
